@@ -1,0 +1,103 @@
+  
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>React Basics</title>
+  <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react@16/umd/react.development.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+  <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+  <style>
+		table {
+			font-family: arial, sans-serif;
+			border-collapse: collapse;
+			width: 100%;
+		}
+
+		td, th {
+			border: 1px solid #dddddd;
+			text-align: left;
+			padding: 8px;
+		}
+
+		tr:nth-child(even) {
+			background-color: #dddddd;
+		}
+	</style>
+</head>
+<body>
+  <div id="app"></div>
+  <script type="text/babel">
+	class App extends React.Component {
+
+		constructor() {
+			super()
+			this.getAllBooks = this.getAllBooks.bind(this);
+			this.state= {
+				isDataPresent: false,
+				data: null
+			}
+		}
+		
+		getAllBooks() {
+			fetch("/books")
+			.then(res => res.json())
+			.then(
+				(result) => {
+					this.setState({
+						isDataPresent: true,
+						data: result
+					});
+				}
+			)
+		} 		
+
+		render(){
+			return(
+				<div className="app-content">
+					List all books : <button onClick={this.getAllBooks}>Books</button>
+					{this.state.isDataPresent && <ResultTable dataSource={this.state.data}/>
+						}
+				</div>
+			)
+		}
+	}
+
+	class ResultTable extends React.Component {
+		constructor(props) {
+			super(props)
+		}
+		render(){
+			return(
+				<table>
+					<thead>
+						<tr>
+							<td>ID</td>
+							<td>Book Name</td>
+							<td>ISBN</td>
+							<td>Review</td>
+						</tr>
+					</thead>
+					<tbody>
+					{
+						this.props.dataSource.map((item, key) =>
+							<tr>
+								<td>{item.id}</td>
+								<td>{item.name}</td>
+								<td>{item.isbn}</td>
+								<td>{item.review}</td>
+							</tr>
+						)
+					}
+					</tbody>
+				</table>
+			)
+		}
+	}
+
+    ReactDOM.render(<App />, document.getElementById('app'));
+  </script>
+</body>
+</html>
